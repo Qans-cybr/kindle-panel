@@ -19,6 +19,14 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Paneli Guncelle (Test)
+      - name: Python Betigini Calistir
         run: |
-          echo "Bulut otomasyonu basariyla calisti!"
+          python main.py
+
+      - name: Degisiklikleri Kaydet ve Gonder
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add panel.html
+          git diff --staged --quiet || git commit -m "Otomatik panel guncellemesi (Gunluk)"
+          git push
