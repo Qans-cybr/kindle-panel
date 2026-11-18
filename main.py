@@ -1,15 +1,15 @@
 import datetime
 import urllib.request
-import json
 import re
+import os
+from playwright.sync_api import sync_playwright
 
 def hava_durumu_cek(sehir):
     try:
         url = f"https://wttr.in/{sehir}?format=%C+%t"
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
-            result = response.read().decode('utf-8').strip()
-            return result
+            return response.read().decode('utf-8').strip()
     except:
         return "Bilgi alınamadı"
 
@@ -30,7 +30,6 @@ def panel_guncelle():
     print(f"Sarayköy Hava: {saraykoy_hava}")
     print(f"Gölhisar Hava: {golhisar_hava}")
 
-    # panel.html dosyasını okuyup güncelleyelim
     try:
         with open("panel.html", "r", encoding="utf-8") as f:
             html = f.read()
@@ -46,6 +45,19 @@ def panel_guncelle():
         with open("panel.html", "w", encoding="utf-8") as f:
             f.write(html)
         print("panel.html başarıyla güncellendi!")
+
+        # HTML dosyasını Kindle ekran ölçülerine uygun PNG görseline çevir
+        print("Ekran koruyucu görseli (`screen.png`) oluşturuluyor...")
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            # Kindle e-ink ekran boyutlarına uygun oran (örneğin 800x1000)
+            page = browser.new_page(viewport={'width': 800, 'height': 1050})
+            path = os.path.abspath("panel.html")
+            page.goto(f"file://{path}")
+            page.screenshot(path="screen.png")
+            browser.close()
+        print("screen.png başarıyla oluşturuldu!")
+
     except Exception as e:
         print(f"Hata oluştu: {e}")
 
