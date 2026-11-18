@@ -19,22 +19,20 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Fontlari ve Kutuphaneleri Kur
+      - name: Fontlari ve Resim Kutuphanesini Kur
         run: |
           sudo apt-get update
-          sudo apt-get install -y fonts-dejavu fonts-liberation fonts-noto-core
-          pip install playwright
-          playwright install --with-deps chromium
+          sudo apt-get install -y fonts-dejavu-core
+          pip install pillow
 
       - name: Python Betigini Calistir
         run: |
           python main.py
 
-      - name: Degisiklikleri Kaydet ve Gonder
+      - name: Degisiklikleri Zorla Kaydet ve Gonder
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main || true
-          git add panel.html screen.png
-          git diff --staged --quiet || git commit -m "Otomatik panel guncellemesi"
-          git push
+          git add screen.png panel.html
+          git commit -m "Otomatik panel guncellemesi" || true
+          git push --force origin HEAD:main
