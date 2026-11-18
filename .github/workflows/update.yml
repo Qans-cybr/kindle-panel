@@ -19,7 +19,12 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Python Betigini Calistir
+      - name: Gerekli Kutuphaneleri Kur
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Python Betigini Calistir (HTML ve PNG Guncelle)
         run: |
           python main.py
 
@@ -27,6 +32,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add panel.html
-          git diff --staged --quiet || git commit -m "Otomatik panel guncellemesi (Gunluk)"
+          git add panel.html screen.png
+          git diff --staged --quiet || git commit -m "Otomatik panel ve ekran koruyucu guncellemesi (Gunluk)"
           git push
