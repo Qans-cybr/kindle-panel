@@ -1,0 +1,24 @@
+name: Kindle Panel Guncelleme
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Her sabah saat 06:00'da otomatik çalışır
+  workflow_dispatch:      # İstediğin zaman elle de çalıştırabilirsin
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Depoyu Kopyala
+        uses: actions/checkout@v4
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Paneli Guncelle (Test)
+        run: |
+          echo "Bulut otomasyonu basariyla calisti!"
