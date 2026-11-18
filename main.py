@@ -6,7 +6,7 @@ from playwright.sync_api import sync_playwright
 
 def hava_durumu_cek(sehir):
     try:
-        url = f"https://wttr.in/{sehir}?format=%C+%t"
+        url = f"https://wttr.in/{sehir}?format=%C+%t&m"
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
             return response.read().decode('utf-8').strip()
