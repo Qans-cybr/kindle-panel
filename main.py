@@ -6,11 +6,33 @@ from playwright.sync_api import sync_playwright
 
 def hava_durumu_cek(sehir):
     try:
-        # Metrik birim (?m) ekleyerek doğrudan Celsius alıyoruz
         url = f"https://wttr.in/{sehir}?format=%C+%t&m"
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=5) as response:
-            return response.read().decode('utf-8').strip()
+            sonuc = response.read().decode('utf-8').strip()
+            
+            # İngilizce hava durumu terimlerini Türkçe'ye çevirelim
+            ceviriler = {
+                "Sunny": "Güneşli",
+                "Clear": "Açık",
+                "Partly cloudy": "Parçalı Bulutlu",
+                "Cloudy": "Bulutlu",
+                "Overcast": "Kapalı",
+                "Light rain": "Hafif Yağmurlu",
+                "Rain": "Yağmurlu",
+                "Heavy rain": "Şiddetli Yağmurlu",
+                "Thunderstorm": "Gök Gürültülü Fırtına",
+                "Snow": "Karlı",
+                "Mist": "Puslu",
+                "Fog": "Sisli"
+            }
+            
+            for ing, tr in ceviriler.items():
+                if ing.lower() in sonuc.lower():
+                    sonuc = re.sub(ing, tr, sonuc, flags=re.IGNORECASE)
+                    break
+                    
+            return sonuc
     except:
         return "Bilgi alınamadı"
 
@@ -39,13 +61,12 @@ def panel_guncelle():
         html = re.sub(r'<b>Saat:<\/b>.*?&nbsp;', f'<b>Saat:</b> {saat_str} &nbsp;', html)
         html = re.sub(r'<b>Tarih:<\/b>.*?<\/div>', f'<b>Tarih:</b> {tarih_str}</div>', html, flags=re.DOTALL)
 
-        # Hava durumlarını tek bir blok halinde tertemiz güncelleyelim
+        # Hava durumlarını Türkçe blok olarak güncelleyelim
         hava_html = f'''<div class="weather-sub">
         &bull; <b>Sarayk&ouml;y:</b> {saraykoy_hava}<br>
         &bull; <b>G&ouml;lhisar:</b> {golhisar_hava}
       </div>'''
         
-        # Eski hava durumu bloklarını tamamen temizleyip yenisini ekleyelim
         html = re.sub(r'<div class="weather-sub">.*?<\/div>', hava_html, html, flags=re.DOTALL)
 
         with open("panel.html", "w", encoding="utf-8") as f:
